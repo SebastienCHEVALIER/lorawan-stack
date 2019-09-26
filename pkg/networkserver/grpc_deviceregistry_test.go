@@ -314,6 +314,9 @@ func TestDeviceRegistrySet(t *testing.T) {
 					LoRaWANPHYVersion: ttnpb.PHY_V1_0,
 					LoRaWANVersion:    ttnpb.MAC_V1_0,
 					SupportsJoin:      true,
+					Session: &ttnpb.Session{
+						DevAddr: types.DevAddr{},
+					},
 				},
 				FieldMask: pbtypes.FieldMask{
 					Paths: []string{
@@ -321,6 +324,7 @@ func TestDeviceRegistrySet(t *testing.T) {
 						"lorawan_phy_version",
 						"lorawan_version",
 						"mac_settings.adr_margin",
+						"session.dev_addr",
 						"supports_class_b",
 						"supports_class_c",
 						"supports_join",
@@ -330,7 +334,7 @@ func TestDeviceRegistrySet(t *testing.T) {
 			ErrorAssertion: func(t *testing.T, err error) bool {
 				return assertions.New(t).So(errors.IsInvalidArgument(err), should.BeTrue)
 			},
-			SetByIDCalls: 1,
+			SetByIDCalls: 0,
 		},
 
 		{
