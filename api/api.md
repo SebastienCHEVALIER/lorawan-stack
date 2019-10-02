@@ -368,6 +368,16 @@
 - [File `lorawan-stack/api/organization_services.proto`](#lorawan-stack/api/organization_services.proto)
   - [Service `OrganizationAccess`](#ttn.lorawan.v3.OrganizationAccess)
   - [Service `OrganizationRegistry`](#ttn.lorawan.v3.OrganizationRegistry)
+- [File `lorawan-stack/api/qrcodegenerator.proto`](#lorawan-stack/api/qrcodegenerator.proto)
+  - [Message `GenerateEndDeviceQRCodeImageRequest`](#ttn.lorawan.v3.GenerateEndDeviceQRCodeImageRequest)
+  - [Message `GenerateEndDeviceQRCodeTextRequest`](#ttn.lorawan.v3.GenerateEndDeviceQRCodeTextRequest)
+  - [Message `GenerateQRCodeImageResponse`](#ttn.lorawan.v3.GenerateQRCodeImageResponse)
+  - [Message `GenerateQRCodeTextResponse`](#ttn.lorawan.v3.GenerateQRCodeTextResponse)
+  - [Message `GetQRCodeFormatRequest`](#ttn.lorawan.v3.GetQRCodeFormatRequest)
+  - [Message `QRCodeFormat`](#ttn.lorawan.v3.QRCodeFormat)
+  - [Message `QRCodeFormats`](#ttn.lorawan.v3.QRCodeFormats)
+  - [Message `QRCodeFormats.FormatsEntry`](#ttn.lorawan.v3.QRCodeFormats.FormatsEntry)
+  - [Service `EndDeviceQRCodeGenerator`](#ttn.lorawan.v3.EndDeviceQRCodeGenerator)
 - [File `lorawan-stack/api/regional.proto`](#lorawan-stack/api/regional.proto)
   - [Message `ConcentratorConfig`](#ttn.lorawan.v3.ConcentratorConfig)
   - [Message `ConcentratorConfig.Channel`](#ttn.lorawan.v3.ConcentratorConfig.Channel)
@@ -2193,6 +2203,7 @@ Power state of the device.
 | `DEVICE_TEMPLATE_CONVERTER` | 8 |  |
 | `DEVICE_CLAIMING_SERVER` | 9 |  |
 | `GATEWAY_CONFIGURATION_SERVER` | 10 |  |
+| `QR_CODE_GENERATOR` | 11 |  |
 
 ### <a name="ttn.lorawan.v3.DownlinkPathConstraint">Enum `DownlinkPathConstraint`</a>
 
@@ -5213,6 +5224,115 @@ where the user or organization is collaborator on.
 | `List` | `GET` | `/api/v3/users/{collaborator.user_ids.user_id}/organizations` |  |
 | `Update` | `PUT` | `/api/v3/organizations/{organization.ids.organization_id}` | `*` |
 | `Delete` | `DELETE` | `/api/v3/organizations/{organization_id}` |  |
+
+## <a name="lorawan-stack/api/qrcodegenerator.proto">File `lorawan-stack/api/qrcodegenerator.proto`</a>
+
+### <a name="ttn.lorawan.v3.GenerateEndDeviceQRCodeImageRequest">Message `GenerateEndDeviceQRCodeImageRequest`</a>
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `format_id` | [`string`](#string) |  |  |
+| `end_device` | [`EndDevice`](#ttn.lorawan.v3.EndDevice) |  |  |
+| `image_size` | [`uint32`](#uint32) |  |  |
+
+#### Field Rules
+
+| Field | Validations |
+| ----- | ----------- |
+| `format_id` | <p>`string.max_len`: `36`</p><p>`string.pattern`: `^[a-z0-9](?:[-]?[a-z0-9]){2,}$`</p> |
+| `end_device` | <p>`message.required`: `true`</p> |
+| `image_size` | <p>`uint32.lte`: `1000`</p> |
+
+### <a name="ttn.lorawan.v3.GenerateEndDeviceQRCodeTextRequest">Message `GenerateEndDeviceQRCodeTextRequest`</a>
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `format_id` | [`string`](#string) |  |  |
+| `end_device` | [`EndDevice`](#ttn.lorawan.v3.EndDevice) |  |  |
+
+#### Field Rules
+
+| Field | Validations |
+| ----- | ----------- |
+| `format_id` | <p>`string.max_len`: `36`</p><p>`string.pattern`: `^[a-z0-9](?:[-]?[a-z0-9]){2,}$`</p> |
+| `end_device` | <p>`message.required`: `true`</p> |
+
+### <a name="ttn.lorawan.v3.GenerateQRCodeImageResponse">Message `GenerateQRCodeImageResponse`</a>
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `text` | [`string`](#string) |  |  |
+| `image` | [`bytes`](#bytes) |  | QR code in PNG format. |
+
+### <a name="ttn.lorawan.v3.GenerateQRCodeTextResponse">Message `GenerateQRCodeTextResponse`</a>
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `text` | [`string`](#string) |  |  |
+
+### <a name="ttn.lorawan.v3.GetQRCodeFormatRequest">Message `GetQRCodeFormatRequest`</a>
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `format_id` | [`string`](#string) |  |  |
+
+#### Field Rules
+
+| Field | Validations |
+| ----- | ----------- |
+| `format_id` | <p>`string.max_len`: `36`</p><p>`string.pattern`: `^[a-z0-9](?:[-]?[a-z0-9]){2,}$`</p> |
+
+### <a name="ttn.lorawan.v3.QRCodeFormat">Message `QRCodeFormat`</a>
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [`string`](#string) |  |  |
+| `description` | [`string`](#string) |  |  |
+| `field_mask` | [`google.protobuf.FieldMask`](#google.protobuf.FieldMask) |  | The entity fields required to generate the QR code. |
+
+#### Field Rules
+
+| Field | Validations |
+| ----- | ----------- |
+| `name` | <p>`string.max_len`: `100`</p> |
+| `description` | <p>`string.max_len`: `200`</p> |
+
+### <a name="ttn.lorawan.v3.QRCodeFormats">Message `QRCodeFormats`</a>
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `formats` | [`QRCodeFormats.FormatsEntry`](#ttn.lorawan.v3.QRCodeFormats.FormatsEntry) | repeated |  |
+
+#### Field Rules
+
+| Field | Validations |
+| ----- | ----------- |
+| `formats` | <p>`map.keys.string.max_len`: `36`</p><p>`map.keys.string.pattern`: `^[a-z0-9](?:[-]?[a-z0-9]){2,}$`</p> |
+
+### <a name="ttn.lorawan.v3.QRCodeFormats.FormatsEntry">Message `QRCodeFormats.FormatsEntry`</a>
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `key` | [`string`](#string) |  |  |
+| `value` | [`QRCodeFormat`](#ttn.lorawan.v3.QRCodeFormat) |  |  |
+
+### <a name="ttn.lorawan.v3.EndDeviceQRCodeGenerator">Service `EndDeviceQRCodeGenerator`</a>
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| `GetFormat` | [`GetQRCodeFormatRequest`](#ttn.lorawan.v3.GetQRCodeFormatRequest) | [`QRCodeFormat`](#ttn.lorawan.v3.QRCodeFormat) | Return the QR code format. |
+| `ListFormats` | [`.google.protobuf.Empty`](#google.protobuf.Empty) | [`QRCodeFormats`](#ttn.lorawan.v3.QRCodeFormats) | Returns the supported formats. |
+| `GenerateText` | [`GenerateEndDeviceQRCodeTextRequest`](#ttn.lorawan.v3.GenerateEndDeviceQRCodeTextRequest) | [`GenerateQRCodeTextResponse`](#ttn.lorawan.v3.GenerateQRCodeTextResponse) | Generates the text value of the QR code. |
+| `GenerateImage` | [`GenerateEndDeviceQRCodeImageRequest`](#ttn.lorawan.v3.GenerateEndDeviceQRCodeImageRequest) | [`GenerateQRCodeImageResponse`](#ttn.lorawan.v3.GenerateQRCodeImageResponse) | Generates a QR code image in PNG format. |
+
+#### HTTP bindings
+
+| Method Name | Method | Pattern | Body |
+| ----------- | ------ | ------- | ---- |
+| `GetFormat` | `GET` | `/api/v3/qrcodes/end-devices/formats/{format_id}` |  |
+| `ListFormats` | `GET` | `/api/v3/qrcodes/end-devices/formats` |  |
+| `GenerateText` | `POST` | `/api/v3/qrcodes/end-devices/text` | `*` |
+| `GenerateImage` | `POST` | `/api/v3/qrcodes/end-devices/image` | `*` |
 
 ## <a name="lorawan-stack/api/regional.proto">File `lorawan-stack/api/regional.proto`</a>
 
